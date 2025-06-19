@@ -8,6 +8,7 @@ import com.example.todo.common.exceptions.NotFoundException;
 
 import jakarta.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,17 +40,24 @@ public class TaskController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
     
+    //updating get mappings with the ResponseDTO
     @GetMapping
-    public ResponseEntity<List<Task>> getAll() {
+    public ResponseEntity<List<TaskResponseDTO>> getAll() {
         List<Task> allTasks = this.taskService.findAll();
-        return new ResponseEntity<>(allTasks, HttpStatus.OK);
+        List<TaskResponseDTO> response = new ArrayList<>();
+
+        for(Task task : allTasks) {
+            response.add(taskService.mapToDTO(task));
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getById(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<TaskResponseDTO> getById(@PathVariable Long id) throws NotFoundException {
         Optional<Task> foundTask = this.taskService.findById(id);
         if (foundTask.isPresent()) {
-            return new ResponseEntity<>(foundTask.get(), HttpStatus.OK);
+            TaskResponseDTO dto = taskService.mapToDTO(foundTask.get());
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         }
         throw new NotFoundException("Task with id" + id + " does not exist");
     }
