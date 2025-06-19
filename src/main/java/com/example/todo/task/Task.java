@@ -74,6 +74,15 @@ public class Task extends BaseEntity {
         this.isArchived = isArchived;
     }
 
+    //Adding these as an easy way to add/remove cats to tasks
+
+    public void addCategory(Category category) {
+    this.categories.add(category);
+    }
+
+    public void removeCategory(Category category) {
+        this.categories.remove(category);
+    }
 
     
 }

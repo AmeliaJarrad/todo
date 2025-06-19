@@ -5,7 +5,7 @@ INSERT INTO category (catname) VALUES
 ('Learning');
 
 -- Insert tasks
-INSERT INTO tasks (taskname, dueDate, createdDate, isCompleted, isArchived) VALUES 
+INSERT INTO tasks (taskname, due_date, created_at, is_completed, is_archived) VALUES 
 ('Finish project report', '2025-06-20', '2025-06-10', false, false),
 ('Buy groceries', '2025-06-13', '2025-06-11', false, false),
 ('Watch Spring Boot tutorial', '2025-06-15', '2025-06-12', false, false);

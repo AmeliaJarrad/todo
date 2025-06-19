@@ -4,7 +4,7 @@ package com.example.todo.category;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class CreateCatagoryDTO {
+public class CreateCategoryDTO {
     
     @NotBlank
     private String catname;
@@ -17,11 +17,11 @@ public class CreateCatagoryDTO {
         this.catname = catname;
     }
 
-    public CreateCatagoryDTO() {
+    public CreateCategoryDTO() {
         
     }
 
-    public CreateCatagoryDTO(String catname) {
+    public CreateCategoryDTO(String catname) {
         this.catname = catname;
     }
 }

@@ -9,26 +9,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class CategoryService {
 
-    private CategoryRespository categoryRespository;
+    private CategoryRepository categoryRepository;
     private ModelMapper modelMapper;
 
-    CategoryService(CategoryRespository categoryRespository, ModelMapper modelMapper) {
-        this.categoryRespository = categoryRespository;
+    CategoryService(CategoryRepository categoryRepository, ModelMapper modelMapper) {
+        this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
     }
 
-    public Category create(CreateCatagoryDTO data) {
+    public Category create(CreateCategoryDTO data) {
         Category newCategory  = modelMapper.map(data, Category.class);
-        Category savedCategory = this.categoryRespository.save(newCategory);
+        Category savedCategory = this.categoryRepository.save(newCategory);
         return savedCategory;
     }
 
     public List<Category> findAll() {
-        return this.categoryRespository.findAll();
+        return this.categoryRepository.findAll();
     }
 
     public Optional<Category> findById(Long id) {
-        return this.categoryRespository.findById(id);
+        return this.categoryRepository.findById(id);
     }
 
 //So the delete method that Martyna wrote is this:
@@ -36,13 +36,13 @@ public class CategoryService {
 //might not be appropriate for here, this is probably more of what would happen in the task, but 
 //we don't want hard delete there, it just needs to change it
 
-    public boolean deletebyId(Long id) {
+    public boolean deleteById(Long id) {
         Optional<Category> foundCat = this.findById(id);
         if(foundCat.isEmpty()) {
             return false;
         }
         Category catFromDb = foundCat.get();
-        this.categoryRespository.delete(catFromDb);
+        this.categoryRepository.delete(catFromDb);
         return true;
     }
 
@@ -58,7 +58,9 @@ public class CategoryService {
         Category catFromDb = foundCat.get();
 
         this.modelMapper.map(data, catFromDb);
-        this.categoryRespository.save(catFromDb);
+        this.categoryRepository.save(catFromDb);
         return Optional.of(catFromDb);
     }
+
+
 }
