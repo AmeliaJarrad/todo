@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import type { Task } from '../services/tasks';
+import type { Task } from '../../services/tasks';
 import styles from "./TaskCard.module.scss";
 
 interface TaskCardProps {
@@ -16,7 +16,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
         <p>{task.createdAt}</p>
         <p>{task.dueDate}</p>
         <p>{task.isCompleted}</p>
-       
+       <p>Categories: {task.categories.length > 0 ? task.categories.join(", ") : "None"}</p>
 
     </div>
   )
