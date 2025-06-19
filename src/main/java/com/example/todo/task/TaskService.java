@@ -78,18 +78,52 @@ public class TaskService {
         return true;
     }
 
+    //adding the category handling 
     public Optional<Task> updateById(Long id, UpdateTaskDTO data) {
-        Optional<Task> foundTask = this.findById(id);
+    Optional<Task> foundTask = this.findById(id);
 
-        if(foundTask.isEmpty()) {
-            return foundTask;
+        if (foundTask.isEmpty()) {
+            return Optional.empty();
         }
 
         Task taskFromDB = foundTask.get();
-        this.modelMapper.map(data, taskFromDB);
-        this.taskRepository.save(taskFromDB);
-        return Optional.of(taskFromDB);
+
+        //  modelMapper to skip nulls
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.map(data, taskFromDB);
+
+    // Handle categories 
+        if (data.getCategoryNames() != null) {
+            List<Category> updatedCategories = new ArrayList<>();
+
+            for (String catname : data.getCategoryNames()) {
+                Optional<Category> existingCat = categoryRepository.findByCatname(catname);
+
+                if (existingCat.isPresent()) {
+                    updatedCategories.add(existingCat.get());
+                } else {
+                    // Create a new Category instance and set the name
+                    Category newCategory = new Category();
+                    newCategory.setCatname(catname);
+
+                    Category savedCategory = categoryRepository.save(newCategory);
+                    updatedCategories.add(savedCategory);
+                }
+            }
+
+        // Replace the task's categories with the updated list
+        taskFromDB.getCategories().clear();
+        taskFromDB.getCategories().addAll(updatedCategories);
+        }
+
+        //saving the updated task
+     taskRepository.save(taskFromDB);
+
+    return Optional.of(taskFromDB);
+
     }
+
+
 
     //this one is for finding by cat name - now with case insensitivity
     public List<Task> findByCategoryNames(List<String> categoryNames) {

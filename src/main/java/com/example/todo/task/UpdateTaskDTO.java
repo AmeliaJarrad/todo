@@ -1,9 +1,9 @@
 package com.example.todo.task;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class UpdateTaskDTO {
@@ -13,12 +13,20 @@ public class UpdateTaskDTO {
 
     @FutureOrPresent
     private LocalDate dueDate;
-
-    @NotNull
+    
     private boolean isCompleted;
-
-    @NotNull
+    
     private boolean isArchived;
+
+    private List<String> categoryNames;
+
+    public List<String> getCategoryNames() {
+        return categoryNames;
+    }
+
+    public void setCategoryNames(List<String> categoryNames) {
+        this.categoryNames = categoryNames;
+    }
 
     public String getTaskname() {
         return taskname;
