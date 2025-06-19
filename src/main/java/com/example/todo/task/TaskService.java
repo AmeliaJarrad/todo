@@ -90,4 +90,35 @@ public class TaskService {
         this.taskRepository.save(taskFromDB);
         return Optional.of(taskFromDB);
     }
+
+    //this one is for finding by cat name - now with case insensitivity
+    public List<Task> findByCategoryNames(List<String> categoryNames) {
+    List<String> lowered = categoryNames.stream()
+        .map(String::toLowerCase)
+        .toList();
+
+    return taskRepository.findByCategoryNamesIgnoreCase(lowered);
+    }
+
+
+    // method for the TaskResponseDTO
+
+    public TaskResponseDTO mapToDTO(Task task) {
+    TaskResponseDTO dto = new TaskResponseDTO();
+
+    dto.setId(task.getId());
+    dto.setTaskname(task.getTaskname());
+    dto.setDueDate(task.getDueDate());
+    dto.setCompleted(task.isCompleted());
+    dto.setArchived(task.isArchived());
+
+    // Convert category objects to list of catname strings
+    List<String> categoryNames = new ArrayList<>();
+    for (Category cat : task.getCategories()) {
+        categoryNames.add(cat.getCatname());
+    }
+    dto.setCategories(categoryNames);
+
+    return dto;
+}
 }

@@ -1,6 +1,7 @@
 package com.example.todo.task;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.todo.common.exceptions.NotFoundException;
@@ -52,7 +53,22 @@ public class TaskController {
         }
         throw new NotFoundException("Task with id" + id + " does not exist");
     }
-    
+
+//new mapping for get with params, gets either all tasks or filtered tasks
+   @GetMapping(params = "category")
+    public ResponseEntity<List<Task>> getTasksByCategory(
+    @RequestParam("category") List<String> categoryNames) {
+
+    if (categoryNames != null && !categoryNames.isEmpty()) {
+        List<Task> filteredTasks = taskService.findByCategoryNames(categoryNames);
+        return ResponseEntity.ok(filteredTasks);
+    }
+     List<Task> allTasks = taskService.findAll();
+    return ResponseEntity.ok(allTasks);
+
+    }
+
+
     //at the moment I'm holding of on doing the deletemapping, because i need to figure out how to do that, I think
     //that it's going to be changing the isArchived field to true and then returning a filtered list
 
@@ -65,4 +81,7 @@ public class TaskController {
             () -> new NotFoundException("Could not update task with id " + id + " , it does not exist"));
             return new ResponseEntity<>(updated, HttpStatus.OK);
     }
+
+
+
 }
