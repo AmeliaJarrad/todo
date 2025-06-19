@@ -16,6 +16,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     WHERE LOWER(c.catname) IN (:names)
     """, nativeQuery = true)
 List<Task> findByCategoryNamesIgnoreCase(@Param("names") List<String> names);
+
+    List<Task> findByIsArchivedTrue();
         
 }
 

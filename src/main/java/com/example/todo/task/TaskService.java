@@ -160,4 +160,8 @@ public class TaskService {
 
     return dto;
 }
+
+    public List<Task> findArchivedTasks() {
+       return taskRepository.findByIsArchivedTrue();
+    }
 }

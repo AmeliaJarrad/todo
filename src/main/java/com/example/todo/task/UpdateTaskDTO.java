@@ -14,9 +14,9 @@ public class UpdateTaskDTO {
     @FutureOrPresent
     private LocalDate dueDate;
     
-    private boolean isCompleted;
+    private Boolean isCompleted;
     
-    private boolean isArchived;
+    private Boolean isArchived;
 
     private List<String> categoryNames;
 
@@ -36,14 +36,14 @@ public class UpdateTaskDTO {
         return dueDate;
     }
 
-    public boolean isCompleted() {
+    public Boolean getIsCompleted() {
         return isCompleted;
     }
 
-    public boolean isArchived() {
+    public Boolean getIsArchived() {
         return isArchived;
     }
 
-
+//fixed my lower case booleans (primitives) to upper case (object types)
     
 }

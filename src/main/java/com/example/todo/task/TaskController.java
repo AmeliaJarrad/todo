@@ -98,6 +98,12 @@ public class TaskController {
             return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
+//just the archived tasks
 
+    @GetMapping("/archived")
+    public ResponseEntity<List<Task>> getArchivedTasks() {
+        List<Task> archivedTasks = taskService.findArchivedTasks();
+        return ResponseEntity.ok(archivedTasks);
+    }
 
 }
