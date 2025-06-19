@@ -56,25 +56,30 @@ public class TaskService {
         return savedTask;
     }
 
+    //now that I got the archived mapping, adding that to the findall so
+    //archived tasks don't appear
     public List<Task> findAll() {
-        return this.taskRepository.findAll();
+        return this.taskRepository.findAll().stream()
+            .filter(task -> !task.isArchived())
+            .toList();
     }
 
     public Optional<Task> findById(Long id) {
         return this.taskRepository.findById(id);
     }
 
-    //delete mapping not fully here yet, need to figure out soft delete which will be changing the tag to archived
+    //delete mapping with soft delete 
 
-    public boolean deletebyId(Long id) {
+    public boolean archiveById(Long id) {
         //check if task exists
         Optional<Task> foundTask = this.findById(id);
         if (foundTask.isEmpty()) {
             return false;
         }
         Task taskFromDb = foundTask.get();
-        // this.taskRepository.delete(taskFromDb);
-        //line 45 here is what needs to change, we just want to change the isArchived to true and return that
+        taskFromDb.setArchived(true); //here's soft deleting
+        taskRepository.save(taskFromDb);
+
         return true;
     }
 

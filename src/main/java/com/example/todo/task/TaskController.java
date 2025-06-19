@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,9 +78,16 @@ public class TaskController {
     }
 
 
-    //at the moment I'm holding of on doing the deletemapping, because i need to figure out how to do that, I think
-    //that it's going to be changing the isArchived field to true and then returning a filtered list
+  //deletey mapping! but not actual delete its getting archived - soft delete
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> archiveById(@PathVariable Long id) throws NotFoundException {
+        boolean archived = this.taskService.archiveById(id);
+        if (archived) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }
+        throw new NotFoundException("Task with id " + id + " does not exist");
+    }
 
     @PatchMapping("{id}")
     public ResponseEntity<Task> updateById(@PathVariable Long id, @Valid @RequestBody UpdateTaskDTO data)
