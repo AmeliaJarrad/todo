@@ -17,13 +17,18 @@ export interface Category{
     catname: string;
 }
 
+//now will take new cats and existing cats 
 export interface NewTaskForm {
     taskname: string;
     dueDate?: string;         
     isCompleted: boolean;    
-    isArchived?: boolean;     
-    categoryNames: string[];
+    isArchived: boolean;     
+    categoryIds?: number[];
+    newCategoryNames?: string[];
 }
+
+//for updates
+export type UpdateTaskForm = Partial<NewTaskForm>;
 
 export interface CreateTaskDTO {
   taskname: string;
@@ -63,13 +68,7 @@ export const createCategory = async (categoryName: string) => {
   });
 };
 
-export const createTask = async (task: {
-    taskname: string;
-    dueDate?: string;
-    isCompleted: boolean;
-    isArchived?: boolean;
-    categoryNames: string[];
-        }) => {
+export const createTask = async (task: NewTaskForm)  => {
         console.log("sending task to backend", task)
     const response = await fetch("http://localhost:8080/tasks", {
         method: "POST",
@@ -84,16 +83,7 @@ export const createTask = async (task: {
     }
 };
 
-export const updateTask = async (
-    id: number, 
-    updates: {
-    taskname?: string;
-    dueDate?: string;
-    isCompleted?: boolean;
-    isArchived?: boolean;
-    categoryNames?: string[]; 
-  }
-) => {
+export const updateTask = async (id: number, updates: UpdateTaskForm) => {
      console.log("Sending update to backend for task ID:", id);
     console.log("Update payload:", JSON.stringify(updates, null, 2));
   const response = await fetch(`http://localhost:8080/tasks/${id}`, {
@@ -113,7 +103,11 @@ export const duplicateTask = async (originalTask: Task) => {
   const copy = {
     taskname: originalTask.taskname + " (copy)",
     dueDate: originalTask.dueDate,
-    categoryNames: originalTask.categories, 
+    isCompleted: false,
+    isArchived: false,
+    categoryIds: [],
+    newCategoryNames: [],         
+     
   };
 
   await fetch("http://localhost:8080/tasks", {
@@ -121,6 +115,20 @@ export const duplicateTask = async (originalTask: Task) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(copy),
   });
+
+
 };
+
+export const archiveTask = async (id: number): Promise<void> => {
+  const response = await fetch(`http://localhost:8080/tasks/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to archive task: ${error}`);
+  }
+};
+
 
 //https://stackoverflow.com/questions/47643692/how-to-make-http-post-request-from-front-end-to-spring

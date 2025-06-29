@@ -1,25 +1,30 @@
-import  { useEffect, useState } from 'react'
-import { getAllTasks, type Task } from '../services/tasks';
-import TaskCard from '../components/TaskCard/TaskCard';
+import { useEffect, useState } from 'react';
+import { getAllTasks, updateTask, type Task } from '../services/tasks';
+import TaskList from '../components/TaskList/TaskList';
 
 const AllTasksPage = () => {
-    const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-    useEffect(() => {
-        getAllTasks()
-        .then((res) => {
-            console.log(res, "tasks from API");
-            setTasks(res);
-        })
-        .catch(console.warn);
-    }, []);
+  useEffect(() => {
+    getAllTasks()
+      .then(setTasks)
+      .catch(console.warn);
+  }, []);
+
+  const handleToggleArchive = async (id: number, isArchived: boolean) => {
+    try {
+      await updateTask(id, { isArchived });
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Error toggling archive:", error);
+    }
+  };
+
   return (
     <div>
-        {tasks.map((task: Task) => {
-            return <TaskCard task={task} key={task.id} />;
-        })}
+      <TaskList tasks={tasks} onToggleArchive={handleToggleArchive} />
     </div>
-  )
-}
+  );
+};
 
-export default AllTasksPage
+export default AllTasksPage;

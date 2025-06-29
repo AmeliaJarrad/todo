@@ -18,15 +18,23 @@ public class UpdateTaskDTO {
     
     private Boolean isArchived;
 
-    private List<String> categoryNames;
+    //new fields for category handling
 
-    public List<String> getCategoryNames() {
-        return categoryNames;
-    }
+    private List<Long> categoryIds;           
+    // for selecting existing categories
+    private List<String> newCategoryNames;    
+    
+    // for creating new categories
 
-    public void setCategoryNames(List<String> categoryNames) {
-        this.categoryNames = categoryNames;
-    }
+    // private List<String> categoryNames;
+
+    // public List<String> getCategoryNames() {
+    //     return categoryNames;
+    // }
+
+    // public void setCategoryNames(List<String> categoryNames) {
+    //     this.categoryNames = categoryNames;
+    // }
 
     public String getTaskname() {
         return taskname;
@@ -42,6 +50,24 @@ public class UpdateTaskDTO {
 
     public Boolean getIsArchived() {
         return isArchived;
+    }
+
+    //new getters and setters for the category handling changes
+
+     public List<Long> getCategoryIds() {
+        return categoryIds;
+    }
+
+    public void setCategoryIds(List<Long> categoryIds) {
+        this.categoryIds = categoryIds;
+    }
+
+    public List<String> getNewCategoryNames() {
+        return newCategoryNames;
+    }
+
+    public void setNewCategoryNames(List<String> newCategoryNames) {
+        this.newCategoryNames = newCategoryNames;
     }
 
 //fixed my lower case booleans (primitives) to upper case (object types)

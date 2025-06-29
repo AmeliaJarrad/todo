@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getArchivedTasks, type Task } from '../services/tasks';
-import TaskCard from '../components/TaskCard/TaskCard';
+import { getArchivedTasks, updateTask, type Task } from '../services/tasks';
+import TaskList from '../components/TaskList/TaskList';
 
 const ArchivedTasksPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -11,14 +11,18 @@ const ArchivedTasksPage = () => {
       .catch(console.warn);
   }, []);
 
+  const handleToggleArchive = async (id: number, isArchived: boolean) => {
+    try {
+      await updateTask(id, { isArchived });
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Error toggling archive:", error);
+    }
+  };
+
   return (
     <div>
-      <h1>Archived Tasks</h1>
-      {tasks.length === 0 ? (
-        <p>No archived tasks found.</p>
-      ) : (
-        tasks.map((task) => <TaskCard key={task.id} task={task} />)
-      )}
+      <TaskList tasks={tasks} onToggleArchive={handleToggleArchive} />
     </div>
   );
 };

@@ -25,26 +25,64 @@ public class TaskService {
 
     public Task create(CreateTaskDTO data) {
         //turning the CreateTaskDTO object to a Task object
+        //Adding validation check here to make sure cat exists
+        boolean hasExistingCategories = data.getCategoryIds() != null && !data.getCategoryIds().isEmpty();
+        boolean hasNewCategories = data.getNewCategoryNames() != null && !data.getNewCategoryNames().isEmpty();
+
+        if (!hasExistingCategories && !hasNewCategories) {
+        throw new IllegalArgumentException("You must provide at least one category (existing or new).");
+    }
 
         Task newTask = modelMapper.map(data, Task.class);
-
-        //call the catagory list and check if catagory exists already, add if doesnt
         List<Category> categories = new ArrayList<>();
-        if(data.getCategoryNames() != null) {
-            for(String catname : data.getCategoryNames()) {
-                Optional<Category> existingCat = categoryRepository.findByCatname(catname);
+      
 
-                if(existingCat.isPresent()) {
-                    categories.add(existingCat.get());
-                } else {
-                    Category newCategory = new Category();
-                    newCategory.setCatname(catname);
-                    Category savedCategory = categoryRepository.save(newCategory);
-                    categories.add(savedCategory);
+        // //call the catagory list and check if catagory exists already, add if doesnt
+       
+        // if(data.getCategoryNames() != null) {
+        //     for(String catname : data.getCategoryNames()) {
+        //         Optional<Category> existingCat = categoryRepository.findByCatname(catname);
 
-                }
+        //         if(existingCat.isPresent()) {
+        //             categories.add(existingCat.get());
+        //         } else {
+        //             Category newCategory = new Category();
+        //             newCategory.setCatname(catname);
+        //             Category savedCategory = categoryRepository.save(newCategory);
+        //             categories.add(savedCategory);
+
+        //         }
+        //     }
+        // }
+
+  //refactor here to handle changes to catagories to eventually a dropdown
+    if (hasExistingCategories) {
+        for (Long id : data.getCategoryIds()) {
+            Optional<Category> foundCategory = categoryRepository.findById(id);
+            if (foundCategory.isPresent()) {
+                categories.add(foundCategory.get());
+            } else {
+                System.out.println("Category with ID " + id + " not found.");
             }
         }
+    }
+
+        // Handle new categories by name
+        if (hasNewCategories) {
+        for (String name : data.getNewCategoryNames()) {
+            Optional<Category> foundCategory = categoryRepository.findByCatname(name);
+            if (foundCategory.isPresent()) {
+                categories.add(foundCategory.get());
+            } else {
+                Category newCategory = new Category();
+                newCategory.setCatname(name);
+                Category savedCategory = categoryRepository.save(newCategory);
+                categories.add(savedCategory);
+            }
+        }
+    }
+
+
 
         //now gotta attach the category to the task
         for(Category category : categories) {
@@ -97,38 +135,92 @@ public class TaskService {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.map(data, taskFromDB);
 
-    // Handle categories 
-        if (data.getCategoryNames() != null) {
-            List<Category> updatedCategories = new ArrayList<>();
+    // Handle categories refactor
 
-            for (String catname : data.getCategoryNames()) {
-                Optional<Category> existingCat = categoryRepository.findByCatname(catname);
+    List<Category> updatedCategories = new ArrayList<>();
 
-                if (existingCat.isPresent()) {
-                    updatedCategories.add(existingCat.get());
-                } else {
-                    // Create a new Category instance and set the name
-                    Category newCategory = new Category();
-                    newCategory.setCatname(catname);
-
-                    Category savedCategory = categoryRepository.save(newCategory);
-                    updatedCategories.add(savedCategory);
-                }
+    //Handle existing categories by ID
+    if (data.getCategoryIds() != null) {
+        for (Long categoryId : data.getCategoryIds()) {
+            Optional<Category> existing = categoryRepository.findById(categoryId);
+            if (existing.isPresent()) {
+                updatedCategories.add(existing.get());
+            } else {
+                System.out.println("Category ID " + categoryId + " not found.");
             }
+        }
+    }
 
-        // Replace the task's categories with the updated list
+    //Handle new cats by name 
+    if (data.getNewCategoryNames() != null) {
+        for (String name : data.getNewCategoryNames()) {
+            Optional<Category> existing = categoryRepository.findByCatname(name);
+            if (existing.isPresent()) {
+                updatedCategories.add(existing.get());
+            } else {
+                Category newCategory = new Category();
+                newCategory.setCatname(name);
+                Category savedCategory = categoryRepository.save(newCategory);
+                updatedCategories.add(savedCategory);
+            }
+        }
+    }
+
+        // if (data.getCategoryNames() != null) {
+        //     System.out.println("updating catagories to: " + data.getCategoryNames());
+        //     List<Category> updatedCategories = new ArrayList<>();
+
+        //     for (String catname : data.getCategoryNames()) {
+        //         Optional<Category> existingCat = categoryRepository.findByCatname(catname);
+
+        //         if (existingCat.isPresent()) {
+        //             updatedCategories.add(existingCat.get());
+        //         } else {
+        //             // Create a new Category instance and set the name
+        //             Category newCategory = new Category();
+        //             newCategory.setCatname(catname);
+
+        //             Category savedCategory = categoryRepository.save(newCategory);
+        //             updatedCategories.add(savedCategory);
+                    
+        //         }
+        //     }
+
+        // Replace current cats
         taskFromDB.getCategories().clear();
         taskFromDB.getCategories().addAll(updatedCategories);
-        }
+        
 
-        //saving the updated task
-     taskRepository.save(taskFromDB);
+// //trying to figure out why cat changes not saving
+//     System.out.println("Final categories on task before save:");
+//     taskFromDB.getCategories().forEach(cat -> System.out.println(cat.getCatname()));
 
-    return Optional.of(taskFromDB);
+//             //saving the updated task
+//      taskRepository.save(taskFromDB);
+
+//     // Re-fetch from DB to get updated timestamps
+//         Task refreshed = taskRepository.findById(id).get();
+//         return Optional.of(refreshed);
+
+//     }
+
+
+    // debug logging
+    System.out.println("Updated categories:");
+    for (Category cat : updatedCategories) {
+        System.out.println(" - " + cat.getCatname());
 
     }
 
+    // Save updated task
+    taskRepository.save(taskFromDB);
 
+    // Refresh from DB to get updated timestamps
+    Task refreshed = taskRepository.findById(id).get();
+    return Optional.of(refreshed);
+    
+
+    }
 
     //this one is for finding by cat name - now with case insensitivity
     public List<Task> findByCategoryNames(List<String> categoryNames) {

@@ -1,6 +1,6 @@
 .nav {
   width: 98%;
-  background-color: #ffffff11;
+  background-color: #ffffff3d;
     display: flex;
     height: 6vh;
     padding: 0 1em;
@@ -19,14 +19,14 @@
   
     &_link {
       text-decoration: none;
-      color: #4040fa;
+      color: #6d3014;
       &:hover {
         scale: 1.05;
         transition: 0.2s ease-in-out;
         color: #ffb937;
       }
       &:visited {
-        color: #4040fa;
+        color: #ebe5e3;
         text-decoration: none;
         &:hover {
           color: #ffb937;

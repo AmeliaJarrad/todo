@@ -3,10 +3,12 @@ package com.example.todo.task;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.lang.Nullable;
+
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+
 
 public class CreateTaskDTO {
     @NotBlank
@@ -14,26 +16,37 @@ public class CreateTaskDTO {
 
 
     @FutureOrPresent
+    @Nullable
     private LocalDate dueDate;
 
     @NotNull
-    private boolean isCompleted;
+    private Boolean isCompleted;
 
     @NotNull
-    private boolean isArchived;
+    private Boolean isArchived;
 
-    @NotNull
-    private List<String> categoryNames;
+    //making a change here so I can select from existing cats or add a new if needed
 
-    @NotNull
-    @Size(min = 2, message = "At least one category must be provided")
-    public List<String> getCategoryNames() {
-        return categoryNames;
-    }
+    // @NotNull
+    // private List<String> categoryNames;
 
-    public void setCategoryNames(List<String> categoryNames) {
-        this.categoryNames = categoryNames;
-    }
+    // @NotNull
+    // @Size(min = 1, message = "At least one category must be provided")
+    // public List<String> getCategoryNames() {
+    //     return categoryNames;
+    // }
+
+    // public void setCategoryNames(List<String> categoryNames) {
+    //     this.categoryNames = categoryNames;
+    // }
+
+    //handling validation in the taskservice for these fields
+
+    private List<Long> categoryIds;
+
+    //for adding new categories by name
+    private List<String> newCategoryNames;
+
 
     public String getTaskname() {
         return taskname;
@@ -43,23 +56,53 @@ public class CreateTaskDTO {
         return dueDate;
     }
 
-    public boolean isCompleted() {
-        return isCompleted;
+    public Boolean getIsCompleted() {
+    return isCompleted;
+}
+
+    public void setIsCompleted(Boolean isCompleted) {
+        this.isCompleted = isCompleted;
     }
 
-    public boolean isArchived() {
+    public Boolean getIsArchived() {
         return isArchived;
+    }
+
+    public void setIsArchived(Boolean isArchived) {
+        this.isArchived = isArchived;
+    }
+
+
+    //getters and setters for the change
+
+    public List<Long> getCategoryIds() {
+        return categoryIds;
+    }
+
+    public void setCategoryIds(List<Long> categoryIds) {
+        this.categoryIds = categoryIds;
+    }
+
+    public List<String> getNewCategoryNames() {
+        return newCategoryNames;
+    }
+
+    public void setNewCategoryNames(List<String> newCategoryNames) {
+        this.newCategoryNames = newCategoryNames;
     }
 
     public CreateTaskDTO() {
 
     }
     
-    public CreateTaskDTO(String taskname, LocalDate dueDate, boolean isCompleted, boolean isArchived, @NotNull List<String> categoryNames) {
-        this.taskname = taskname;
-        this.dueDate = dueDate;
-        this.isCompleted = isCompleted;
-        this.isArchived = isArchived;
-        this.categoryNames = categoryNames;
+    //changes to the createTaskDTO to account for new fields
+    public CreateTaskDTO(String taskname, LocalDate dueDate, Boolean isCompleted, 
+    Boolean isArchived, List<Long> categoryIds, List<String> newCategoryNames) {
+    this.taskname = taskname;
+    this.dueDate = dueDate;
+    this.isArchived = isArchived;
+    this.isCompleted = isCompleted;
+    this.categoryIds = categoryIds;
+    this.newCategoryNames = newCategoryNames;
     }
 }

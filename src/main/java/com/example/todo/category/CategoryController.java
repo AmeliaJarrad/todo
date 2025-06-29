@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-//Don't think this is correct - I'll need to change these various Category files, I think they're supposed to be more like
-// how the loan or member patterns are from the example, while tasks is more like the books
+
 
 @RestController
 @RequestMapping("/categories")
