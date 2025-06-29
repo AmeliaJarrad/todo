@@ -5,7 +5,7 @@ export interface Task{
     taskname: string;
     dueDate: string;
     isCompleted: boolean;
-    isArchived: boolean;
+    archived: boolean;
     categories: string [];
 
 }

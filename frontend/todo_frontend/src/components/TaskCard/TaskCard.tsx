@@ -9,9 +9,9 @@ interface TaskCardProps {
 
 const TaskCard = ({ task, onToggleArchive }: TaskCardProps) => {
   const handleArchiveClick = () => {
-    onToggleArchive(task.id, !task.isArchived);
+    onToggleArchive(task.id, !task.archived);
   };
-console.log("rendering Taskcard", task)
+console.log("rendering Taskcard", task.id, "archived", task.archived);
   return (
     <div className={styles.card}>
       <Link to={`/tasks/${task.id}`}>
@@ -23,10 +23,10 @@ console.log("rendering Taskcard", task)
       <p>Categories: {task.categories.length > 0 ? task.categories.join(", ") : "None"}</p>
 
       <div className={styles.buttonRow}>
-        {!task.isArchived && (
+        {!task.archived && (
           <button onClick={handleArchiveClick} className={styles.archiveBtn}>Archive</button>
         )}
-        {task.isArchived && (
+        {task.archived && (
           <button onClick={handleArchiveClick} className={styles.unarchiveBtn}>Unarchive</button>
         )}
         <Link to={`/tasks/${task.id}/edit`} className={styles.editBtn}>Edit</Link>

@@ -50,7 +50,7 @@ const TaskPage = () => {
         <p>{task.createdAt}</p>
         <p>{task.dueDate}</p>
         <p>Completed: {task.isCompleted ? "Yes" : "No"}</p>
-        <p>Archived: {task.isArchived ? "Yes" : "No"}</p>
+        <p>Archived: {task.archived ? "Yes" : "No"}</p>
         <p>Last Updated: {task.updatedAt ? task.updatedAt : "N/A"}</p>
         <p>Categories: {task.categories.length > 0 ? task.categories.join(", ") : "None"}</p>
 

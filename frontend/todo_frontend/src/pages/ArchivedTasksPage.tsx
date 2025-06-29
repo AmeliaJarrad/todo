@@ -7,7 +7,10 @@ const ArchivedTasksPage = () => {
 
   useEffect(() => {
     getArchivedTasks()
-      .then(setTasks)
+      .then(tasks => {
+      console.log("Archived tasks fetched:", tasks);
+      setTasks(tasks);
+      })
       .catch(console.warn);
   }, []);
 
