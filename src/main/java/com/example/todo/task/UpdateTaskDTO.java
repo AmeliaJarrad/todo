@@ -3,6 +3,8 @@ package com.example.todo.task;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Pattern;
 
@@ -14,8 +16,10 @@ public class UpdateTaskDTO {
     @FutureOrPresent
     private LocalDate dueDate;
     
+    @JsonProperty("isCompleted")
     private Boolean isCompleted;
     
+    @JsonProperty("isArchived")
     private Boolean isArchived;
 
     //new fields for category handling
@@ -48,8 +52,16 @@ public class UpdateTaskDTO {
         return isCompleted;
     }
 
+    public void setIsCompleted(Boolean isCompleted) {
+    this.isCompleted = isCompleted;
+    }
+
     public Boolean getIsArchived() {
         return isArchived;
+    }
+
+    public void setIsArchived(Boolean isArchived) {
+        this.isArchived = isArchived;
     }
 
     //new getters and setters for the category handling changes

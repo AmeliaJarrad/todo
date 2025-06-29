@@ -96,11 +96,9 @@ public class TaskService {
 
     //now that I got the archived mapping, adding that to the findall so
     //archived tasks don't appear
-    public List<Task> findAll() {
-        return this.taskRepository.findAll().stream()
-            .filter(task -> !task.isArchived())
-            .toList();
-    }
+  public List<Task> findAll() {
+    return taskRepository.findByArchivedFalse();
+}
 
     public Optional<Task> findById(Long id) {
         return this.taskRepository.findById(id);
@@ -116,8 +114,10 @@ public class TaskService {
         }
         Task taskFromDb = foundTask.get();
         taskFromDb.setArchived(true); //here's soft deleting
-        taskRepository.save(taskFromDb);
 
+        System.out.println("Archiving task: " + taskFromDb.getId()); // <- debug log
+
+        taskRepository.saveAndFlush(taskFromDb); // Ensure the change is persisted immediately
         return true;
     }
 
@@ -134,6 +134,10 @@ public class TaskService {
         //  modelMapper to skip nulls
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.map(data, taskFromDB);
+
+            if (data.getIsArchived() != null) {
+            taskFromDB.setArchived(data.getIsArchived());
+        }
 
     // Handle categories refactor
 
@@ -254,6 +258,6 @@ public class TaskService {
 }
 
     public List<Task> findArchivedTasks() {
-       return taskRepository.findByIsArchivedTrue();
+       return taskRepository.findByArchivedTrue();
     }
 }

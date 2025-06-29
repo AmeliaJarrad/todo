@@ -8,7 +8,7 @@ public class TaskResponseDTO {
     private String taskname;
     private LocalDate dueDate;
     private boolean isCompleted;
-    private boolean isArchived;
+    private boolean archived;
     private List<String> categories;
 
 
@@ -39,10 +39,10 @@ public class TaskResponseDTO {
         this.isCompleted = isCompleted;
     }
     public boolean isArchived() {
-        return isArchived;
+        return archived;
     }
-    public void setArchived(boolean isArchived) {
-        this.isArchived = isArchived;
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
     public List<String> getCategories() {
         return categories;
@@ -54,3 +54,5 @@ public class TaskResponseDTO {
 }
 
 //I wanted to be able to show the categories with the tasks, seems best way to do that is with the responseDTO
+
+//Flipping beans

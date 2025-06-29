@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.lang.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,11 +21,16 @@ public class CreateTaskDTO {
     @Nullable
     private LocalDate dueDate;
 
+    //Adding these JsonProperty annotations, issues with the archived/isArchived being read, its
+    //some naming convention issue refer to Attributes.md more reading in htere on it
+
     @NotNull
+    @JsonProperty("isCompleted")
     private Boolean isCompleted;
 
     @NotNull
-    private Boolean isArchived;
+    @JsonProperty("isArchived")
+    private Boolean archived;
 
     //making a change here so I can select from existing cats or add a new if needed
 
@@ -52,8 +59,16 @@ public class CreateTaskDTO {
         return taskname;
     }
 
+    public void setTaskname(String taskname) {
+        this.taskname = taskname;
+    }
+
     public LocalDate getDueDate() {
         return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
     public Boolean getIsCompleted() {
@@ -64,12 +79,12 @@ public class CreateTaskDTO {
         this.isCompleted = isCompleted;
     }
 
-    public Boolean getIsArchived() {
-        return isArchived;
+    public Boolean getArchived() {
+        return archived;
     }
 
-    public void setIsArchived(Boolean isArchived) {
-        this.isArchived = isArchived;
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
     }
 
 
@@ -97,12 +112,14 @@ public class CreateTaskDTO {
     
     //changes to the createTaskDTO to account for new fields
     public CreateTaskDTO(String taskname, LocalDate dueDate, Boolean isCompleted, 
-    Boolean isArchived, List<Long> categoryIds, List<String> newCategoryNames) {
+    Boolean archived, List<Long> categoryIds, List<String> newCategoryNames) {
     this.taskname = taskname;
     this.dueDate = dueDate;
-    this.isArchived = isArchived;
+    this.archived = archived;
     this.isCompleted = isCompleted;
     this.categoryIds = categoryIds;
     this.newCategoryNames = newCategoryNames;
     }
 }
+
+//so much wrestling with the JSON jackson spring bean naming convention headaches!!

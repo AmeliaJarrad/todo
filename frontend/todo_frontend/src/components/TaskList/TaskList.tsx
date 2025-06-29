@@ -8,6 +8,10 @@ interface TaskListProps {
 }
 
 const TaskList = ({ tasks, onToggleArchive }: TaskListProps) => {
+     if (!tasks || !Array.isArray(tasks)) {
+    return <div>No tasks available</div>;
+  }
+  
   return (
     <div className={styles.tasksContainer}>
       {tasks.map((task) => (

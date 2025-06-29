@@ -40,6 +40,11 @@ export interface CreateTaskDTO {
 
 export const getAllTasks = async (): Promise<Task[]> => {
     const response = await fetch("http://localhost:8080/tasks");
+      if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Failed to fetch tasks:", errorText);
+    throw new Error(`HTTP ${response.status} - ${errorText}`);
+  }
     const tasks = await response.json();
     return tasks;
 }

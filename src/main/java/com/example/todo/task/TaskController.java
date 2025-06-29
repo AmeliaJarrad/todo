@@ -35,11 +35,12 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping
-    public ResponseEntity<Task> create(@Valid @RequestBody CreateTaskDTO data) {
-        Task saved = this.taskService.create(data);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
-    }
+  @PostMapping
+    public ResponseEntity<TaskResponseDTO> create(@Valid @RequestBody CreateTaskDTO data) {
+    Task saved = this.taskService.create(data);
+    TaskResponseDTO dto = taskService.mapToDTO(saved);
+    return new ResponseEntity<>(dto, HttpStatus.CREATED);
+}
     
     //updating get mappings with the ResponseDTO
     @GetMapping
@@ -102,12 +103,12 @@ public ResponseEntity<List<TaskResponseDTO>> getTasksByCategory(
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<Task> updateById(@PathVariable Long id, @Valid @RequestBody UpdateTaskDTO data)
+    public ResponseEntity<TaskResponseDTO> updateById(@PathVariable Long id, @Valid @RequestBody UpdateTaskDTO data)
     throws NotFoundException {
         Optional<Task> result = this.taskService.updateById(id, data);
-        Task updated = result.orElseThrow(
-            () -> new NotFoundException("Could not update task with id " + id + " , it does not exist"));
-            return new ResponseEntity<>(updated, HttpStatus.OK);
+        Task updated = result.orElseThrow(() -> new NotFoundException("Could not update task with id " + id));
+        TaskResponseDTO dto = taskService.mapToDTO(updated);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
 //just the archived tasks
