@@ -15,8 +15,10 @@ background-color: rgba(255, 255, 255, 0.753);
 
 .buttonRow {
   display: flex;
+  align-items: center;  // vertically center everything
   justify-content: space-between;
   margin-top: 1rem;
+  gap: 1rem;  // space between children
 }
 
 
@@ -61,4 +63,25 @@ background-color: rgba(255, 255, 255, 0.753);
 
 .editBtn:hover {
   background-color: #21618c;
+}
+
+.checkboxRow {
+  display: flex;
+  justify-content: center;  // center horizontally
+  margin-top: 1rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  cursor: pointer;
+  
+  input[type="checkbox"] {
+    width: 24px;   // a bit bigger
+    height: 24px;
+    margin-right: 0.5rem;
+    cursor: pointer;
+    accent-color: #33af39; // nice green tint
+  }
 }

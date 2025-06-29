@@ -20,9 +20,21 @@ const AllTasksPage = () => {
     }
   };
 
+  const handleToggleComplete = async (id: number, isCompleted: boolean) => {
+  try {
+    await updateTask(id, { isCompleted });
+    setTasks(prev =>
+      prev.map(t => t.id === id ? { ...t, isCompleted } : t)
+    );
+  } catch (error) {
+    console.error("Error updating completion status:", error);
+  }
+};
+
+
   return (
     <div>
-      <TaskList tasks={tasks} onToggleArchive={handleToggleArchive} />
+      <TaskList tasks={tasks} onToggleArchive={handleToggleArchive} onToggleComplete={handleToggleComplete}/>
     </div>
   );
 };

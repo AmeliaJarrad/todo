@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createTask, type NewTaskForm } from '../services/tasks'; 
 import { useNavigate } from 'react-router-dom';
+import styles from './AddNewTaskPage.module.scss';
 
 type Category = {
   id: number;
@@ -27,6 +28,8 @@ const AddNewTask = () => {
 
     const formData = new FormData(form);
     const entries = Object.fromEntries(formData.entries());
+
+    
 
 // Because form inputs always come as strings (or empty strings if unchecked), 
   // we must parse checkbox value and convert accordingly
@@ -66,38 +69,62 @@ const AddNewTask = () => {
     }
   };
 
-  return (
-    <form ref={formRef} onSubmit={handleSubmit}>
-      <input name="taskname" type="text" placeholder="Task name" required />
-      <input name="dueDate" type="date" />
+  const handleCancel = () => {
+    navigate('/');
+  };
 
-      <label>
-        Select a Category:
-        <select name="categoryId" defaultValue="">
-          <option value="" disabled>
-            -- Choose one --
-          </option>
-          {categories.map(cat => (
-            <option key={cat.id} value={cat.id}>
-              {cat.catname}
-            </option>
-          ))}
-        </select>
-      </label>
 
-      <input
-        name="newCategoryName"
-        type="text"
-        placeholder="Or add new category"
-      />
+   return (
+    <div className={styles.card}>
+      <form ref={formRef} onSubmit={handleSubmit}>
+        <div className={styles.formGroup}>
+          <label>
+            Task Name:
+            <input name="taskname" type="text" placeholder="Task name" required />
+          </label>
+        </div>
 
-      <label>
-        Completed:
-        <input name="isCompleted" type="checkbox" />
-      </label>
+        <div className={styles.formGroup}>
+          <label>
+            Due Date:
+            <input name="dueDate" type="date"  min={new Date().toISOString().split("T")[0]}/>
+          </label>
+        </div>
 
-      <button type="submit">Create Task</button>
-    </form>
+        <div className={styles.formGroup}>
+          <label>
+            Select a Category:
+            <select name="categoryId" defaultValue="">
+              <option value="" disabled>-- Choose one --</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.catname}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>
+            Or add new category:
+            <input name="newCategoryName" type="text" placeholder="New category name" />
+          </label>
+        </div>
+
+        <div className={`${styles.formGroup} ${styles.checkbox}`}>
+          
+        </div>
+
+        <div className={styles.buttonRow}>
+          
+          <button type="button" onClick={handleCancel} className={styles.cancelBtn}>Cancel</button>
+        
+          <button type="submit" className={styles.submitBtn}>Create Task</button>
+        
+        </div>
+      </form>
+    </div>
   );
 };
 
