@@ -82,6 +82,20 @@ background-color: rgba(255, 255, 255, 0.753);
     height: 24px;
     margin-right: 0.5rem;
     cursor: pointer;
-    accent-color: #33af39; // nice green tint
+    accent-color: #33af39; 
   }
+}
+
+.duplicateBtn {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.duplicateBtn:hover {
+  background-color: #4834d4;
 }

@@ -3,13 +3,15 @@ package com.example.todo.task;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.todo.category.CategoryResponseDTO;
+
 public class TaskResponseDTO {
     private Long id;
     private String taskname;
     private LocalDate dueDate;
     private boolean isCompleted;
     private boolean archived;
-    private List<String> categories;
+    private List<CategoryResponseDTO> categories;
 
 
     public Long getId() {
@@ -44,10 +46,10 @@ public class TaskResponseDTO {
     public void setArchived(boolean archived) {
         this.archived = archived;
     }
-    public List<String> getCategories() {
+    public List<CategoryResponseDTO> getCategories() {
         return categories;
     }
-    public void setCategories(List<String> categories) {
+    public void setCategories(List<CategoryResponseDTO> categories) {
         this.categories = categories;
     }
 

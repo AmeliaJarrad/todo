@@ -6,9 +6,10 @@ interface TaskCardProps {
   task: Task;
   onToggleArchive: (id: number, isArchived: boolean) => void;
   onToggleComplete?: (id: number, isCompleted: boolean) => void;
+  onDuplicate?: (task: Task) => void;
 }
 
-const TaskCard = ({ task, onToggleArchive, onToggleComplete }: TaskCardProps) => {
+const TaskCard = ({ task, onToggleArchive, onToggleComplete, onDuplicate }: TaskCardProps) => {
   const handleArchiveClick = () => {
     onToggleArchive(task.id, !task.archived);
   };
@@ -21,7 +22,12 @@ console.log("rendering Taskcard", task.id, "archived", task.archived);
       <p>Created: {task.createdAt}</p>
       <p>Due: {task.dueDate}</p>
      
-      <p>Categories: {task.categories.length > 0 ? task.categories.join(", ") : "None"}</p>
+      <p>
+      Categories:{" "}
+      {task.categories.length > 0
+        ? task.categories.map(cat => typeof cat === "string" ? cat : cat.catname).join(", ")
+        : "None"}
+      </p>
 
     <div className={styles.checkboxRow}>
         <label className={styles.checkbox}>
@@ -49,6 +55,13 @@ console.log("rendering Taskcard", task.id, "archived", task.archived);
         <Link to={`/tasks/${task.id}/edit`} className={styles.editBtn}>
           Edit
         </Link>
+        {onDuplicate && (
+          <button onClick={() => onDuplicate(task)} className={styles.duplicateBtn}>
+            Duplicate
+          </button>
+        )}
+
+
       </div>
   </div>
   );

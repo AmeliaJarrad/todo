@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.todo.category.Category;
 import com.example.todo.category.CategoryRepository;
+import com.example.todo.category.CategoryResponseDTO;
 
 @Service
 public class TaskService {
@@ -248,14 +249,23 @@ public class TaskService {
     dto.setArchived(task.isArchived());
 
     // Convert category objects to list of catname strings
-    List<String> categoryNames = new ArrayList<>();
+    // List<String> categoryNames = new ArrayList<>();
+    // for (Category cat : task.getCategories()) {
+    //     categoryNames.add(cat.getCatname());
+    // }
+    // dto.setCategories(categoryNames);
+
+    // Now that returning a ResponseDTO instead
+
+    List<CategoryResponseDTO> categoryDTOs = new ArrayList<>();
     for (Category cat : task.getCategories()) {
-        categoryNames.add(cat.getCatname());
+        CategoryResponseDTO catDto = new CategoryResponseDTO(cat.getId(), cat.getCatname());
+        categoryDTOs.add(catDto);
     }
-    dto.setCategories(categoryNames);
+    dto.setCategories(categoryDTOs);
 
     return dto;
-}
+    }
 
     public List<Task> findArchivedTasks() {
        return taskRepository.findByArchivedTrue();

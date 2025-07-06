@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getAllTasks, updateTask, type Task } from '../services/tasks';
 import TaskList from '../components/TaskList/TaskList';
+import styles from '../components/TaskList/TaskList.module.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const AllTasksPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+   const [showCompleted, setShowCompleted] = useState(false); // state to toggle completed section
 
   useEffect(() => {
     getAllTasks()
@@ -31,10 +35,43 @@ const AllTasksPage = () => {
   }
 };
 
+// Separate tasks
+  const incompleteTasks = tasks.filter(task => !task.isCompleted);
+  const completedTasks = tasks.filter(task => task.isCompleted);
+
 
   return (
     <div>
-      <TaskList tasks={tasks} onToggleArchive={handleToggleArchive} onToggleComplete={handleToggleComplete}/>
+      <h2 className={styles.sectionHeader}>Todo Tasks</h2>
+      {incompleteTasks.length > 0 ? (
+        <TaskList
+          tasks={incompleteTasks}
+          onToggleArchive={handleToggleArchive}
+          onToggleComplete={handleToggleComplete}
+        />
+      ) : (
+        <p>No incomplete tasks</p>
+      )}
+
+      {completedTasks.length > 0 && (
+        <div>
+          <div
+            className={styles.completedHeader}
+            onClick={() => setShowCompleted(!showCompleted)}
+          >
+            <FontAwesomeIcon icon={showCompleted ? faChevronDown : faChevronRight} />
+            Completed Tasks
+          </div>
+
+          {showCompleted && (
+            <TaskList
+              tasks={completedTasks}
+              onToggleArchive={handleToggleArchive}
+              onToggleComplete={handleToggleComplete}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

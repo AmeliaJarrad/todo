@@ -6,7 +6,10 @@ export interface Task{
     dueDate: string;
     isCompleted: boolean;
     archived: boolean;
-    categories: string [];
+    categories: {
+    id: number;
+    catname: string;
+    }[];
 
 }
 
@@ -105,22 +108,30 @@ export const updateTask = async (id: number, updates: UpdateTaskForm) => {
 };
 
 export const duplicateTask = async (originalTask: Task) => {
+
   const copy = {
     taskname: originalTask.taskname + " (copy)",
     dueDate: originalTask.dueDate,
     isCompleted: false,
     isArchived: false,
-    categoryIds: [],
-    newCategoryNames: [],         
+    categoryIds: originalTask.categories.map(cat => cat.id), 
+    newCategoryNames: []         
      
   };
 
-  await fetch("http://localhost:8080/tasks", {
+  console.log("Sending duplicate task payload:", copy);
+
+  const response = await fetch("http://localhost:8080/tasks", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(copy),
   });
 
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Failed to duplicate task:", errorText);
+    throw new Error(`Failed to duplicate task: ${response.status} ${response.statusText}`);
+  }
 
 };
 
