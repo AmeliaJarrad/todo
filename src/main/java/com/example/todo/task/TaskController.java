@@ -35,11 +35,12 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping
-    public ResponseEntity<Task> create(@Valid @RequestBody CreateTaskDTO data) {
-        Task saved = this.taskService.create(data);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
-    }
+  @PostMapping
+    public ResponseEntity<TaskResponseDTO> create(@Valid @RequestBody CreateTaskDTO data) {
+    Task saved = this.taskService.create(data);
+    TaskResponseDTO dto = taskService.mapToDTO(saved);
+    return new ResponseEntity<>(dto, HttpStatus.CREATED);
+}
     
     //updating get mappings with the ResponseDTO
     @GetMapping
@@ -65,17 +66,29 @@ public class TaskController {
 
 //new mapping for get with params, gets either all tasks or filtered tasks
    @GetMapping(params = "category")
-    public ResponseEntity<List<Task>> getTasksByCategory(
+public ResponseEntity<List<TaskResponseDTO>> getTasksByCategory(
     @RequestParam("category") List<String> categoryNames) {
 
-    if (categoryNames != null && !categoryNames.isEmpty()) {
-        List<Task> filteredTasks = taskService.findByCategoryNames(categoryNames);
-        return ResponseEntity.ok(filteredTasks);
-    }
-     List<Task> allTasks = taskService.findAll();
-    return ResponseEntity.ok(allTasks);
+    List<Task> tasks;
 
-    }
+        if (categoryNames != null && !categoryNames.isEmpty()) {
+            tasks = taskService.findByCategoryNames(categoryNames);
+        } else {
+            tasks = taskService.findAll();
+        }
+
+        // Initialising a list to hold the DTOs
+        List<TaskResponseDTO> response = new ArrayList<>();
+
+        // Convert each Task to TaskResponseDTO and add it to the list
+        for (Task task : tasks) {
+            TaskResponseDTO dto = taskService.mapToDTO(task);
+            response.add(dto);
+        }
+
+        // Return the list wrapped in a ResponseEntity with HTTP status 200 
+        return ResponseEntity.ok(response);
+        }
 
 
   //deletey mapping! but not actual delete its getting archived - soft delete
@@ -90,20 +103,30 @@ public class TaskController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<Task> updateById(@PathVariable Long id, @Valid @RequestBody UpdateTaskDTO data)
+    public ResponseEntity<TaskResponseDTO> updateById(@PathVariable Long id, @Valid @RequestBody UpdateTaskDTO data)
     throws NotFoundException {
         Optional<Task> result = this.taskService.updateById(id, data);
-        Task updated = result.orElseThrow(
-            () -> new NotFoundException("Could not update task with id " + id + " , it does not exist"));
-            return new ResponseEntity<>(updated, HttpStatus.OK);
+        Task updated = result.orElseThrow(() -> new NotFoundException("Could not update task with id " + id));
+        TaskResponseDTO dto = taskService.mapToDTO(updated);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
 //just the archived tasks
 
     @GetMapping("/archived")
-    public ResponseEntity<List<Task>> getArchivedTasks() {
+    public ResponseEntity<List<TaskResponseDTO>> getArchivedTasks() {
         List<Task> archivedTasks = taskService.findArchivedTasks();
-        return ResponseEntity.ok(archivedTasks);
-    }
+        
+        List<TaskResponseDTO> response = new ArrayList<>();
 
+        for (Task task : archivedTasks) {
+        TaskResponseDTO dto = taskService.mapToDTO(task);
+        response.add(dto);
+        }
+
+        // Return the list with HTTP 200 OK
+        return ResponseEntity.ok(response);
+    }
 }
+
+

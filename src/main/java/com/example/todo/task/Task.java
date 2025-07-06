@@ -38,8 +38,8 @@ public class Task extends BaseEntity {
     @Column (nullable = false)
     private boolean isCompleted;
 
-    @Column (nullable = false)
-    private boolean isArchived;
+    @Column (name = "is_archived", nullable = false)
+    private boolean archived;
 
     public String getTaskname() {
         return taskname;
@@ -67,11 +67,11 @@ public class Task extends BaseEntity {
     }
 
     public boolean isArchived() {
-        return isArchived;
+        return archived;
     }
 
-    public void setArchived(boolean isArchived) {
-        this.isArchived = isArchived;
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 
     //Adding these as an easy way to get, add/remove cats to tasks
@@ -90,3 +90,5 @@ public class Task extends BaseEntity {
 
     
 }
+
+//flipping beans

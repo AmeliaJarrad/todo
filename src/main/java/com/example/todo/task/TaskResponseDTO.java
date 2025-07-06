@@ -3,13 +3,15 @@ package com.example.todo.task;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.todo.category.CategoryResponseDTO;
+
 public class TaskResponseDTO {
     private Long id;
     private String taskname;
     private LocalDate dueDate;
     private boolean isCompleted;
-    private boolean isArchived;
-    private List<String> categories;
+    private boolean archived;
+    private List<CategoryResponseDTO> categories;
 
 
     public Long getId() {
@@ -39,18 +41,20 @@ public class TaskResponseDTO {
         this.isCompleted = isCompleted;
     }
     public boolean isArchived() {
-        return isArchived;
+        return archived;
     }
-    public void setArchived(boolean isArchived) {
-        this.isArchived = isArchived;
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
-    public List<String> getCategories() {
+    public List<CategoryResponseDTO> getCategories() {
         return categories;
     }
-    public void setCategories(List<String> categories) {
+    public void setCategories(List<CategoryResponseDTO> categories) {
         this.categories = categories;
     }
 
 }
 
 //I wanted to be able to show the categories with the tasks, seems best way to do that is with the responseDTO
+
+//Flipping beans

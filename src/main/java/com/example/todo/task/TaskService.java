@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.todo.category.Category;
 import com.example.todo.category.CategoryRepository;
+import com.example.todo.category.CategoryResponseDTO;
 
 @Service
 public class TaskService {
@@ -25,26 +26,64 @@ public class TaskService {
 
     public Task create(CreateTaskDTO data) {
         //turning the CreateTaskDTO object to a Task object
+        //Adding validation check here to make sure cat exists
+        boolean hasExistingCategories = data.getCategoryIds() != null && !data.getCategoryIds().isEmpty();
+        boolean hasNewCategories = data.getNewCategoryNames() != null && !data.getNewCategoryNames().isEmpty();
+
+        if (!hasExistingCategories && !hasNewCategories) {
+        throw new IllegalArgumentException("You must provide at least one category (existing or new).");
+    }
 
         Task newTask = modelMapper.map(data, Task.class);
-
-        //call the catagory list and check if catagory exists already, add if doesnt
         List<Category> categories = new ArrayList<>();
-        if(data.getCategoryNames() != null) {
-            for(String catname : data.getCategoryNames()) {
-                Optional<Category> existingCat = categoryRepository.findByCatname(catname);
+      
 
-                if(existingCat.isPresent()) {
-                    categories.add(existingCat.get());
-                } else {
-                    Category newCategory = new Category();
-                    newCategory.setCatname(catname);
-                    Category savedCategory = categoryRepository.save(newCategory);
-                    categories.add(savedCategory);
+        // //call the catagory list and check if catagory exists already, add if doesnt
+       
+        // if(data.getCategoryNames() != null) {
+        //     for(String catname : data.getCategoryNames()) {
+        //         Optional<Category> existingCat = categoryRepository.findByCatname(catname);
 
-                }
+        //         if(existingCat.isPresent()) {
+        //             categories.add(existingCat.get());
+        //         } else {
+        //             Category newCategory = new Category();
+        //             newCategory.setCatname(catname);
+        //             Category savedCategory = categoryRepository.save(newCategory);
+        //             categories.add(savedCategory);
+
+        //         }
+        //     }
+        // }
+
+  //refactor here to handle changes to catagories to eventually a dropdown
+    if (hasExistingCategories) {
+        for (Long id : data.getCategoryIds()) {
+            Optional<Category> foundCategory = categoryRepository.findById(id);
+            if (foundCategory.isPresent()) {
+                categories.add(foundCategory.get());
+            } else {
+                System.out.println("Category with ID " + id + " not found.");
             }
         }
+    }
+
+        // Handle new categories by name
+        if (hasNewCategories) {
+        for (String name : data.getNewCategoryNames()) {
+            Optional<Category> foundCategory = categoryRepository.findByCatname(name);
+            if (foundCategory.isPresent()) {
+                categories.add(foundCategory.get());
+            } else {
+                Category newCategory = new Category();
+                newCategory.setCatname(name);
+                Category savedCategory = categoryRepository.save(newCategory);
+                categories.add(savedCategory);
+            }
+        }
+    }
+
+
 
         //now gotta attach the category to the task
         for(Category category : categories) {
@@ -58,11 +97,9 @@ public class TaskService {
 
     //now that I got the archived mapping, adding that to the findall so
     //archived tasks don't appear
-    public List<Task> findAll() {
-        return this.taskRepository.findAll().stream()
-            .filter(task -> !task.isArchived())
-            .toList();
-    }
+  public List<Task> findAll() {
+    return taskRepository.findByArchivedFalse();
+}
 
     public Optional<Task> findById(Long id) {
         return this.taskRepository.findById(id);
@@ -78,8 +115,10 @@ public class TaskService {
         }
         Task taskFromDb = foundTask.get();
         taskFromDb.setArchived(true); //here's soft deleting
-        taskRepository.save(taskFromDb);
 
+        System.out.println("Archiving task: " + taskFromDb.getId()); // <- debug log
+
+        taskRepository.saveAndFlush(taskFromDb); // Ensure the change is persisted immediately
         return true;
     }
 
@@ -97,38 +136,96 @@ public class TaskService {
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.map(data, taskFromDB);
 
-    // Handle categories 
-        if (data.getCategoryNames() != null) {
-            List<Category> updatedCategories = new ArrayList<>();
-
-            for (String catname : data.getCategoryNames()) {
-                Optional<Category> existingCat = categoryRepository.findByCatname(catname);
-
-                if (existingCat.isPresent()) {
-                    updatedCategories.add(existingCat.get());
-                } else {
-                    // Create a new Category instance and set the name
-                    Category newCategory = new Category();
-                    newCategory.setCatname(catname);
-
-                    Category savedCategory = categoryRepository.save(newCategory);
-                    updatedCategories.add(savedCategory);
-                }
-            }
-
-        // Replace the task's categories with the updated list
-        taskFromDB.getCategories().clear();
-        taskFromDB.getCategories().addAll(updatedCategories);
+            if (data.getIsArchived() != null) {
+            taskFromDB.setArchived(data.getIsArchived());
         }
 
-        //saving the updated task
-     taskRepository.save(taskFromDB);
+    // Handle categories refactor
 
-    return Optional.of(taskFromDB);
+    List<Category> updatedCategories = new ArrayList<>();
+
+    //Handle existing categories by ID
+    if (data.getCategoryIds() != null) {
+        for (Long categoryId : data.getCategoryIds()) {
+            Optional<Category> existing = categoryRepository.findById(categoryId);
+            if (existing.isPresent()) {
+                updatedCategories.add(existing.get());
+            } else {
+                System.out.println("Category ID " + categoryId + " not found.");
+            }
+        }
+    }
+
+    //Handle new cats by name 
+    if (data.getNewCategoryNames() != null) {
+        for (String name : data.getNewCategoryNames()) {
+            Optional<Category> existing = categoryRepository.findByCatname(name);
+            if (existing.isPresent()) {
+                updatedCategories.add(existing.get());
+            } else {
+                Category newCategory = new Category();
+                newCategory.setCatname(name);
+                Category savedCategory = categoryRepository.save(newCategory);
+                updatedCategories.add(savedCategory);
+            }
+        }
+    }
+
+        // if (data.getCategoryNames() != null) {
+        //     System.out.println("updating catagories to: " + data.getCategoryNames());
+        //     List<Category> updatedCategories = new ArrayList<>();
+
+        //     for (String catname : data.getCategoryNames()) {
+        //         Optional<Category> existingCat = categoryRepository.findByCatname(catname);
+
+        //         if (existingCat.isPresent()) {
+        //             updatedCategories.add(existingCat.get());
+        //         } else {
+        //             // Create a new Category instance and set the name
+        //             Category newCategory = new Category();
+        //             newCategory.setCatname(catname);
+
+        //             Category savedCategory = categoryRepository.save(newCategory);
+        //             updatedCategories.add(savedCategory);
+                    
+        //         }
+        //     }
+
+        // Replace current cats
+        taskFromDB.getCategories().clear();
+        taskFromDB.getCategories().addAll(updatedCategories);
+        
+
+// //trying to figure out why cat changes not saving
+//     System.out.println("Final categories on task before save:");
+//     taskFromDB.getCategories().forEach(cat -> System.out.println(cat.getCatname()));
+
+//             //saving the updated task
+//      taskRepository.save(taskFromDB);
+
+//     // Re-fetch from DB to get updated timestamps
+//         Task refreshed = taskRepository.findById(id).get();
+//         return Optional.of(refreshed);
+
+//     }
+
+
+    // debug logging
+    System.out.println("Updated categories:");
+    for (Category cat : updatedCategories) {
+        System.out.println(" - " + cat.getCatname());
 
     }
 
+    // Save updated task
+    taskRepository.save(taskFromDB);
 
+    // Refresh from DB to get updated timestamps
+    Task refreshed = taskRepository.findById(id).get();
+    return Optional.of(refreshed);
+    
+
+    }
 
     //this one is for finding by cat name - now with case insensitivity
     public List<Task> findByCategoryNames(List<String> categoryNames) {
@@ -152,16 +249,25 @@ public class TaskService {
     dto.setArchived(task.isArchived());
 
     // Convert category objects to list of catname strings
-    List<String> categoryNames = new ArrayList<>();
+    // List<String> categoryNames = new ArrayList<>();
+    // for (Category cat : task.getCategories()) {
+    //     categoryNames.add(cat.getCatname());
+    // }
+    // dto.setCategories(categoryNames);
+
+    // Now that returning a ResponseDTO instead
+
+    List<CategoryResponseDTO> categoryDTOs = new ArrayList<>();
     for (Category cat : task.getCategories()) {
-        categoryNames.add(cat.getCatname());
+        CategoryResponseDTO catDto = new CategoryResponseDTO(cat.getId(), cat.getCatname());
+        categoryDTOs.add(catDto);
     }
-    dto.setCategories(categoryNames);
+    dto.setCategories(categoryDTOs);
 
     return dto;
-}
+    }
 
     public List<Task> findArchivedTasks() {
-       return taskRepository.findByIsArchivedTrue();
+       return taskRepository.findByArchivedTrue();
     }
 }
