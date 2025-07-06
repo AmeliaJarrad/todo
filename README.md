@@ -44,19 +44,17 @@ mvn spring-boot:run
 # Run frontend
 ## In subfolders: frontend / todo_frontend 
 npm start
+```
 
-Visit http://localhost:3000 in your browser.
+### Visit http://localhost:3000 in your browser.
 
-Design Goals / Approach
-Separation of Concerns: API handles data and logic, frontend manages UI
+## Design Goals / Approach
+- Separation of Concerns: API handles data and logic, frontend manages UI
+- Soft Delete: Archiving tasks instead of deleting them permanently
+- User-Friendly UI: Completed tasks toggle for less visual clutter
+- Extensible Structure: Categories stored separately to allow scalable filtering
 
-Soft Delete: Archiving tasks instead of deleting them permanently
-
-User-Friendly UI: Completed tasks toggle for less visual clutter
-
-Extensible Structure: Categories stored separately to allow scalable filtering
-
-Features
+## Features
 ✅ Add, edit, archive/unarchive, and duplicate tasks
 
 ✅ Add, update, delete categories
@@ -69,14 +67,14 @@ Features
 
 ✅ Basic client-side form validation
 
-Known Issues
+## Known Issues
 🚫 No tests yet (will be added)
 
 ⚠ Deleting a category doesn’t warn about tasks linked to it
 
 ⚠ Some layout quirks on very small screens
 
-Future Goals
+## Future Goals
 ✅ Add automated tests (Jest + React Testing Library)
 
 ✅ Improve mobile UI and responsiveness
@@ -87,7 +85,7 @@ Future Goals
 
 ✅ Improve keyboard accessibility and ARIA labels
 
-Change Logs
+## Change Logs
 2025-07-06 - Initial MVP Complete
 
 Backend API built with soft delete functionality
@@ -98,7 +96,7 @@ Added category filtering and duplicate task support
 
 Styled with SCSS Modules and FontAwesome icons
 
-What did you struggle with?
+## What did you struggle with?
 Keeping local task state in sync with backend updates
 
 Correctly archiving and filtering tasks while avoiding full-page reloads
@@ -107,9 +105,9 @@ Getting .gitignore and node_modules to behave with Git
 
 Toggling visibility of completed tasks in a clean and intuitive way
 
-Licensing Details
+## Licensing Details
 This project is licensed under the MIT License. See the LICENSE file for more information.
 
-Further Details
+## Further Details
 This is a full-stack project built from scratch for learning and demonstration purposes.
 Can be extended to integrate with calendar tools or used as a base for more complex task apps.
