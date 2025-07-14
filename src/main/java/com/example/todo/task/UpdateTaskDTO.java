@@ -52,6 +52,10 @@ public class UpdateTaskDTO {
         return isCompleted;
     }
 
+    public void setTaskname(String taskname) {
+    this.taskname = taskname;   
+    }
+
     public void setIsCompleted(Boolean isCompleted) {
     this.isCompleted = isCompleted;
     }

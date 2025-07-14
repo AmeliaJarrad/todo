@@ -21,4 +21,5 @@ public class GlobalExceptionHandler {
         System.out.println(ex.getErrors());
         return new ResponseEntity<ValidationErrors>(ex.getErrors(), HttpStatus.BAD_REQUEST);
     }
+
 }
