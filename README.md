@@ -85,7 +85,7 @@ Test Coverage:
 ⚠ Some layout quirks on very small screens
 
 ## Future Goals
-✅ Add automated tests (Jest + React Testing Library)
+✅ Add more automated tests (Jest + React Testing Library)
 
 ✅ Improve mobile UI and responsiveness
 
@@ -105,6 +105,9 @@ React frontend implemented with form validation
 Added category filtering and duplicate task support
 
 Styled with SCSS Modules and FontAwesome icons
+
+2025-07-14 - Added full end-to-end tests for Task API including update and archive
+2025-07-14 - Improved error handling and validation feedback
 
 ## What did you struggle with?
 Keeping local task state in sync with backend updates
