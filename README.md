@@ -43,7 +43,7 @@ mvn spring-boot:run
 
 # Run frontend
 ## In subfolders: frontend / todo_frontend 
-npm start
+npm run dev
 ```
 
 ### Visit http://localhost:3000 in your browser.
