@@ -67,8 +67,23 @@ npm start
 
 ✅ Basic client-side form validation
 
+
+## Automated Tests
+Unit Tests: Service layer tested with JUnit and Mockito
+
+Integration Tests: End-to-end API tests with SpringBootTest and RestAssured
+
+Test Coverage:
+
+Task creation, update, archive, and retrieval
+
+Validation error handling and 404 cases
+
+Filtering tasks by categories
+
+Handling invalid input and non-existent entities
+
 ## Known Issues
-🚫 No tests yet (will be added)
 
 ⚠ Deleting a category doesn’t warn about tasks linked to it
 
