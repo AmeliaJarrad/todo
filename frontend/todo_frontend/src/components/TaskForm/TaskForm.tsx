@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import styles from './TaskForm.module.scss';
 import type { NewTaskForm } from '../../services/tasks';
 
-
 type Category = {
   id: number;
   catname: string;
@@ -15,16 +14,32 @@ type TaskFormProps = {
   submitButtonLabel?: string;
 };
 
-const TaskForm = ({ initialValues = {}, onSubmit, onCancel, submitButtonLabel = 'Submit' }: TaskFormProps) => {
+const TaskForm = ({
+  initialValues = {},
+  onSubmit,
+  onCancel,
+  submitButtonLabel = 'Submit',
+}: TaskFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
+  // Fetch categories on mount
   useEffect(() => {
     fetch('http://localhost:8080/categories')
-      .then(res => res.json())
-      .then(data => setCategories(data))
-      .catch(err => console.error('Failed to load categories:', err));
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
+      .catch((err) => console.error('Failed to load categories:', err));
   }, []);
+
+  // Initialize selectedCategory from initialValues when they arrive or change
+  useEffect(() => {
+    if (initialValues.categoryIds?.length) {
+      setSelectedCategory(initialValues.categoryIds[0].toString());
+    } else {
+      setSelectedCategory('');
+    }
+  }, [initialValues.categoryIds]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,13 +49,25 @@ const TaskForm = ({ initialValues = {}, onSubmit, onCancel, submitButtonLabel = 
     const formData = new FormData(form);
     const entries = Object.fromEntries(formData.entries());
 
-    const isCompleted = form.querySelector<HTMLInputElement>('input[name="isCompleted"]')?.checked ?? false;
+    const isCompleted =
+      form.querySelector<HTMLInputElement>('input[name="isCompleted"]')
+        ?.checked ?? false;
 
-    const selectedCategoryIdRaw = entries.categoryId as string | undefined;
-    const categoryId = selectedCategoryIdRaw ? Number(selectedCategoryIdRaw) : undefined;
+    const categoryId = selectedCategory ? Number(selectedCategory) : undefined;
 
     const newCategoryNameInput = entries.newCategoryName as string | undefined;
-    const newCategoryNames = newCategoryNameInput?.trim() ? [newCategoryNameInput.trim()] : [];
+    const newCategoryNames = newCategoryNameInput?.trim()
+      ? [newCategoryNameInput.trim()]
+      : [];
+
+      //added to force category
+
+        const hasCategory = categoryId || newCategoryNames.length > 0;
+
+  if (!hasCategory) {
+    alert("Please select an existing category or enter a new one.");
+    return; // prevent submission
+  }
 
     const formValues: NewTaskForm = {
       taskname: entries.taskname as string,
@@ -85,12 +112,16 @@ const TaskForm = ({ initialValues = {}, onSubmit, onCancel, submitButtonLabel = 
         <div className={styles.formGroup}>
           <label>
             Select a Category:
-            <select name="categoryId" defaultValue="">
+            <select
+              name="categoryId"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
               <option value="" disabled>
                 -- Choose one --
               </option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id.toString()}>
                   {cat.catname}
                 </option>
               ))}
@@ -122,7 +153,11 @@ const TaskForm = ({ initialValues = {}, onSubmit, onCancel, submitButtonLabel = 
         </div>
 
         <div className={styles.buttonRow}>
-          <button type="button" onClick={onCancel} className={styles.cancelBtn}>
+          <button
+            type="button"
+            onClick={onCancel}
+            className={styles.cancelBtn}
+          >
             Cancel
           </button>
           <button type="submit" className={styles.submitBtn}>

@@ -17,7 +17,11 @@ const EditTaskForm = () => {
     if (!id) return;
 
     getTaskById(id)
-      .then(setTask)
+      .then(task => {
+      console.log("Fetched task:", task); //debugging to find out whats happening
+      setTask(task);
+      })
+      
       .catch(() => setError("Failed to load task"))
       .finally(() => setLoading(false));
   }, [id]);
@@ -44,8 +48,8 @@ const EditTaskForm = () => {
     taskname: task.taskname,
     dueDate: task.dueDate || undefined,
     isCompleted: task.isCompleted,
-    isArchived: false, // You can modify if needed
-    categoryIds: task.categories.length > 0 ? [task.categories[0].id] : [],
+    isArchived: false, 
+    categoryIds: task.categories.map(c => c.id), //map the existing category if set
     newCategoryNames: [], // This will always be empty on edit
   };
 
