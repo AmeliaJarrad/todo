@@ -12,6 +12,7 @@ type TaskFormProps = {
   onSubmit: (formValues: NewTaskForm) => Promise<void>;
   onCancel: () => void;
   submitButtonLabel?: string;
+  showModalMessage?: (message: string, title?: string) => void; 
 };
 
 const TaskForm = ({
@@ -19,6 +20,7 @@ const TaskForm = ({
   onSubmit,
   onCancel,
   submitButtonLabel = 'Submit',
+  showModalMessage,
 }: TaskFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -64,10 +66,14 @@ const TaskForm = ({
 
         const hasCategory = categoryId || newCategoryNames.length > 0;
 
-  if (!hasCategory) {
-    alert("Please select an existing category or enter a new one.");
-    return; // prevent submission
-  }
+if (!hasCategory) {
+  showModalMessage?.(
+    "Please select an existing category or enter a new one.",
+    "Validation Error"
+  );
+  return;
+}
+
 
     const formValues: NewTaskForm = {
       taskname: entries.taskname as string,

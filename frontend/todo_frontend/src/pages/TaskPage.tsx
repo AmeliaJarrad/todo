@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router"
 import { duplicateTask, getTaskById, updateTask, type Task } from "../services/tasks";
 import TaskCard from "../components/TaskCard/TaskCard";
+import Modal from "../components/Modal/Modal";
+
 
 
 const TaskPage = () => {
@@ -10,38 +12,41 @@ const TaskPage = () => {
     
 
     const [task, setTask] = useState<Task | null>(null);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+
+    // New states for duplicate modal input
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [newDueDate, setNewDueDate] = useState(() => {
+    const today = new Date().toISOString().split("T")[0];
+    return today;
+  });
+  const [duplicateError, setDuplicateError] = useState("");
 
     useEffect(() => {
         if (id) getTaskById(id).then(setTask).catch(console.log);
     }, [id]);
 
+      const showModalMessage = (message: string) => {
+        setModalMessage(message);
+        setShowModal(true);
+      };
     console.log(task);
 
     if(!task) {
         return <p>Loading task...</p>;
     }
 
-    //don't need this part now as I'm using the TaskCard component
-
-  //   const handleDelete = async () => {
-  //   try {
-  //     // Archive the task (soft delete)
-  //     await updateTask(task.id, { isArchived: true });
-  //     alert("Task archived");
-  //     navigate("/"); // Redirect to task list after archive
-  //   } catch (err) {
-  //     console.error("Failed to archive task", err);
-  //   }
-  // };
 
   // archive (soft-delete)
   const handleToggleArchive = async (id: number, isArchived: boolean) => {
     try {
       await updateTask(id, { isArchived });
-      alert(isArchived ? "Task archived" : "Task unarchived");
+      showModalMessage(isArchived ? "Task archived" : "Task unarchived");
       navigate("/");
     } catch (err) {
       console.error("Failed to archive task", err);
+      showModalMessage("Failed to archive task");
     }
   };
 
@@ -53,6 +58,7 @@ const TaskPage = () => {
       setTask(prev => prev ? { ...prev, isCompleted } : prev);
     } catch (err) {
       console.error("Failed to mark task complete", err);
+      showModalMessage("Failed to mark task complete");
     }
   };
 
@@ -60,39 +66,75 @@ const TaskPage = () => {
 //dates in past couldn't be duplicated 
 
   const handleDuplicate = async () => {
+    setDuplicateError("");
+    setShowDuplicateModal(true);
+    };
+
+
+    const confirmDuplicate = async () => {
     const today = new Date().toISOString().split("T")[0];
-    const newDueDate = window.prompt("Enter new due date (YYYY-MM-DD):", today);
-
-      if (!newDueDate) return;
-
-      if (new Date(newDueDate) < new Date(today)) {
-      alert("Due date must be today or in the future.");
+    if (newDueDate < today) {
+      setDuplicateError("Due date must be today or in the future.");
       return;
     }
 
 
-
-
     try {
       await duplicateTask({...task, dueDate: newDueDate});
-      alert("Task duplicated");
+      setShowDuplicateModal(false);
+       showModalMessage("Task duplicated");
       navigate("/"); // Redirect to task list or refresh
     } catch (err) {
       console.error("Failed to duplicate task", err);
+       setShowDuplicateModal(false);
+      showModalMessage("Failed to duplicate task");
     }
   };
 
 
   return (
-  <div style={{ maxWidth: "600px", margin: "0 auto" }}>
-      <TaskCard
-        task={task}
-        onToggleArchive={handleToggleArchive}
-        onToggleComplete={handleToggleComplete}
-        onDuplicate={handleDuplicate}
-      />
+   <>
+      {showModal && (
+        <Modal show={showModal} onClose={() => setShowModal(false)} title="Notice">
+          <p>{modalMessage}</p>
+        </Modal>
+      )}
 
-    </div>
+        {/* Duplicate date modal */}
+      {showDuplicateModal && (
+          <Modal
+        show={showDuplicateModal}
+        onClose={() => setShowDuplicateModal(false)}
+        title="Duplicate Task"
+        onConfirm={confirmDuplicate}
+        onCancel={() => setShowDuplicateModal(false)}
+        confirmLabel="Confirm"
+        cancelLabel="Cancel"
+      >
+        <label style={{ display: "block", marginBottom: "1rem" }}>
+          New Due Date:
+          <input
+            type="date"
+            value={newDueDate}
+            min={new Date().toISOString().split("T")[0]}
+            onChange={(e) => setNewDueDate(e.target.value)}
+             style={{ marginLeft: "0.5rem" }}
+          />
+        </label>
+        {duplicateError && <p style={{ color: "red", marginTop: "1rem" }}>{duplicateError}</p>}
+      </Modal>
+
+      )}
+
+      <div style={{ maxWidth: "600px", margin: "0 auto" }}>
+        <TaskCard
+          task={task}
+          onToggleArchive={handleToggleArchive}
+          onToggleComplete={handleToggleComplete}
+          onDuplicate={handleDuplicate}
+        />
+      </div>
+    </>
    
   )
 }
