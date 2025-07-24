@@ -76,7 +76,7 @@ const EditTaskForm = () => {
       <TaskForm
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        onCancel={() => navigate(`/tasks/${task.id}`)}
+        onCancel={() => navigate(`/`)}
         submitButtonLabel="Save Changes"
         showModalMessage={showModalMessage}
       />
