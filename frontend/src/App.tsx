@@ -13,7 +13,7 @@ function App() {
  
 
   return (
-   <BrowserRouter basename="/todo">
+   <BrowserRouter>
    <NavBar />
     <Routes>
       <Route path="/" element={<AllTasksPage />} />
