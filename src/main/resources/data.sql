@@ -1,64 +1,66 @@
--- Insert categories if not already present
+-- Insert categories if they don't already exist
 INSERT INTO category (catname)
 SELECT * FROM (SELECT 'Work') AS tmp
-WHERE NOT EXISTS (
-    SELECT 1 FROM category WHERE catname = 'Work'
-);
+WHERE NOT EXISTS (SELECT 1 FROM category WHERE catname = 'Work');
 
 INSERT INTO category (catname)
 SELECT * FROM (SELECT 'Personal') AS tmp
-WHERE NOT EXISTS (
-    SELECT 1 FROM category WHERE catname = 'Personal'
-);
+WHERE NOT EXISTS (SELECT 1 FROM category WHERE catname = 'Personal');
 
 INSERT INTO category (catname)
 SELECT * FROM (SELECT 'Learning') AS tmp
-WHERE NOT EXISTS (
-    SELECT 1 FROM category WHERE catname = 'Learning'
-);
+WHERE NOT EXISTS (SELECT 1 FROM category WHERE catname = 'Learning');
 
--- Insert tasks if not already present
-INSERT INTO tasks (id, taskname, due_date, created_at, is_completed, is_archived)
+
+-- Insert tasks only if taskname doesn't already exist
+INSERT INTO tasks (taskname, due_date, created_at, is_completed, is_archived)
 SELECT * FROM (
-    SELECT 1, 'Finish project report', '2025-06-20', '2025-06-10', false, false
+  SELECT 'Finish project report', '2025-06-20', '2025-06-10', false, false
 ) AS tmp
 WHERE NOT EXISTS (
-    SELECT 1 FROM tasks WHERE id = 1
+  SELECT 1 FROM tasks WHERE taskname = 'Finish project report'
 );
 
-INSERT INTO tasks (id, taskname, due_date, created_at, is_completed, is_archived)
+INSERT INTO tasks (taskname, due_date, created_at, is_completed, is_archived)
 SELECT * FROM (
-    SELECT 2, 'Buy groceries', '2025-06-13', '2025-06-11', false, false
+  SELECT 'Buy groceries', '2025-06-13', '2025-06-11', false, false
 ) AS tmp
 WHERE NOT EXISTS (
-    SELECT 1 FROM tasks WHERE id = 2
+  SELECT 1 FROM tasks WHERE taskname = 'Buy groceries'
 );
 
-INSERT INTO tasks (id, taskname, due_date, created_at, is_completed, is_archived)
+INSERT INTO tasks (taskname, due_date, created_at, is_completed, is_archived)
 SELECT * FROM (
-    SELECT 3, 'Watch Spring Boot tutorial', '2025-06-15', '2025-06-12', false, false
+  SELECT 'Watch Spring Boot tutorial', '2025-06-15', '2025-06-12', false, false
 ) AS tmp
 WHERE NOT EXISTS (
-    SELECT 1 FROM tasks WHERE id = 3
+  SELECT 1 FROM tasks WHERE taskname = 'Watch Spring Boot tutorial'
 );
+
 
 -- Insert task-category mappings if not already present
+
+-- Link tasks to categories dynamically by name
 INSERT INTO tasks_categories (tasks_id, category_id)
-SELECT * FROM (SELECT 1, 1) AS tmp
-WHERE NOT EXISTS (
-    SELECT 1 FROM tasks_categories WHERE tasks_id = 1 AND category_id = 1
+SELECT t.id, c.id FROM tasks t, category c
+WHERE t.taskname = 'Finish project report' AND c.catname = 'Work'
+  AND NOT EXISTS (
+    SELECT 1 FROM tasks_categories WHERE tasks_id = t.id AND category_id = c.id
 );
 
 INSERT INTO tasks_categories (tasks_id, category_id)
-SELECT * FROM (SELECT 2, 2) AS tmp
-WHERE NOT EXISTS (
-    SELECT 1 FROM tasks_categories WHERE tasks_id = 2 AND category_id = 2
+SELECT t.id, c.id FROM tasks t, category c
+WHERE t.taskname = 'Buy groceries' AND c.catname = 'Personal'
+  AND NOT EXISTS (
+    SELECT 1 FROM tasks_categories WHERE tasks_id = t.id AND category_id = c.id
 );
 
 INSERT INTO tasks_categories (tasks_id, category_id)
-SELECT * FROM (SELECT 3, 3) AS tmp
-WHERE NOT EXISTS (
-    SELECT 1 FROM tasks_categories WHERE tasks_id = 3 AND category_id = 3
+SELECT t.id, c.id FROM tasks t, category c
+WHERE t.taskname = 'Watch Spring Boot tutorial' AND c.catname = 'Learning'
+  AND NOT EXISTS (
+    SELECT 1 FROM tasks_categories WHERE tasks_id = t.id AND category_id = c.id
 );
+
 
 --these all needed to be modified for deploying safely for production and the remote ec2 sql database
