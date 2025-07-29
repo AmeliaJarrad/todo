@@ -2,8 +2,9 @@ on:
     pull_request:
         branches:
             - main
-        types:
-            - closed
+        # types:
+        #     - closed
+        #So the workflow wasn't running properly as I had it on types closed, meaning I had to pull into the main and close
 
 permissions:
     # Allows the workflow to obtain an ID token to authenticate with AWS securely
