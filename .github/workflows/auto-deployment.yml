@@ -20,6 +20,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'  # Use your preferred Node version
+      
+      - name: Check Node and npm versions
+        run: |
+          node -v
+          npm -v
+
 
       - name: Debug current directory
         run: |
