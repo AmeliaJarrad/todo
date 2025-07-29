@@ -48,9 +48,11 @@ const AllTasksPage = () => {
           tasks={incompleteTasks}
           onToggleArchive={handleToggleArchive}
           onToggleComplete={handleToggleComplete}
+          
         />
       ) : (
         <p>No incomplete tasks</p>
+        
       )}
 
       {completedTasks.length > 0 && (
@@ -72,6 +74,8 @@ const AllTasksPage = () => {
           )}
         </div>
       )}
+
+      <p>Testing automatic deploy</p>
     </div>
   );
 };
