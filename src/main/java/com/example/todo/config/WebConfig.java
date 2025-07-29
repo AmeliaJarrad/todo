@@ -12,11 +12,12 @@ public class WebConfig implements WebMvcConfigurer {
         String[] allowedOrigins = {
             "http://localhost:5173",
             "http://127.0.0.1:5173",
-            "https://todo-9go.pages.dev"
+            "https://ameliajarrad.site" // custom domain
         };
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins)
-                .allowedMethods("*")
-                .allowedHeaders("*");
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
