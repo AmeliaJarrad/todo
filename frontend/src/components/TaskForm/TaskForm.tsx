@@ -1,3 +1,6 @@
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+
 import { useEffect, useRef, useState } from 'react';
 import styles from './TaskForm.module.scss';
 import type { NewTaskForm } from '../../services/tasks';
@@ -26,9 +29,9 @@ const TaskForm = ({
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
-  // Fetch categories on mount
+  // Fetch categories on mount - set to the new api
   useEffect(() => {
-    fetch('http://localhost:8080/categories')
+    fetch(`${BASE_URL}/categories`)
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error('Failed to load categories:', err));
