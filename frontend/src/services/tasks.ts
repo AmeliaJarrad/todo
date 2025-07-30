@@ -106,15 +106,12 @@ export const updateTask = async (id: number, updates: UpdateTaskForm) => {
 };
 
 export const duplicateTask = async (originalTask: Task) => {
-  // Re-fetch full task with categories
-  const fullTask = await getTaskById(originalTask.id.toString());
-
   const copy = {
-    taskname: fullTask.taskname + " (copy)",
-    dueDate: fullTask.dueDate,
+    taskname: originalTask.taskname + " (copy)",
+    dueDate: originalTask.dueDate,
     isCompleted: false,
     isArchived: false,
-    categoryNames: fullTask.categories.map(cat => cat.catname),
+    categoryIds: originalTask.categories.map(cat => cat.id), // ← use IDs not names
   };
 
   console.log("Sending duplicate task payload:", copy);
@@ -131,6 +128,7 @@ export const duplicateTask = async (originalTask: Task) => {
     throw new Error(`Failed to duplicate task: ${response.status} ${response.statusText}`);
   }
 };
+
 
 export const archiveTask = async (id: number): Promise<void> => {
   const response = await fetch(`${BASE_URL}/tasks/${id}`, {
