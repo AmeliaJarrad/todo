@@ -111,8 +111,7 @@ export const duplicateTask = async (originalTask: Task) => {
     dueDate: originalTask.dueDate,
     isCompleted: false,
     isArchived: false,
-    categoryIds: originalTask.categories.map(cat => cat.id),
-    newCategoryNames: []
+    categoryNames: originalTask.categories.map(cat => cat.catname),
   };
 
   console.log("Sending duplicate task payload:", copy);
