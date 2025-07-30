@@ -75,7 +75,7 @@ const AllTasksPage = () => {
         </div>
       )}
 
-      <p>Testing automatic deploy</p>
+    
     </div>
   );
 };
