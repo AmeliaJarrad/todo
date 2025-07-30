@@ -106,12 +106,15 @@ export const updateTask = async (id: number, updates: UpdateTaskForm) => {
 };
 
 export const duplicateTask = async (originalTask: Task) => {
+  // Re-fetch full task with categories
+  const fullTask = await getTaskById(originalTask.id.toString());
+
   const copy = {
-    taskname: originalTask.taskname + " (copy)",
-    dueDate: originalTask.dueDate,
+    taskname: fullTask.taskname + " (copy)",
+    dueDate: fullTask.dueDate,
     isCompleted: false,
     isArchived: false,
-    categoryNames: originalTask.categories.map(cat => cat.catname),
+    categoryNames: fullTask.categories.map(cat => cat.catname),
   };
 
   console.log("Sending duplicate task payload:", copy);
