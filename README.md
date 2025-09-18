@@ -24,15 +24,17 @@ This project is a full-stack todo application designed to manage tasks and categ
 ### Tech Stack
 
 - **Frontend:** React + TypeScript, SCSS Modules, FontAwesome for icons  
-- **Backend:** Node.js + Express (assumed), PostgreSQL (or another DB)  
-- **Why:** TypeScript for type safety, React for UI flexibility, REST API for modularity  
+- **Backend:**Spring Boot (Java)
+- **Database :** MySQL 
+- **Why:** Spring Boot provides a robust and scalable backend framework; EC2 allows fine‑grained control over server environment and deployment.
+- TypeScript for type safety, React for UI flexibility, REST API for modularity  
 
 ## Build Steps
 
 ```bash
 # Clone repo
-git clone https://github.com/yourusername/yourrepo.git
-cd yourrepo
+git clone https://github.com/AmeliaJarrad/todo.git
+cd todo
 
 # Install dependencies
 npm install
