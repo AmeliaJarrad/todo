@@ -4,7 +4,7 @@
 
 ## Demo & Snippets
 
-- **Live demo:** [Insert your deployed app URL here]  
+- **Live demo:** https://todo.ameliajarrad.site/
 - **Screenshots:**  
   ![Screenshot 1](./screenshots/incomplete_tasks.png)  
   ![Screenshot 2](./screenshots/completed_tasks_collapsed.png)  
